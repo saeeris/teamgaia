@@ -1,0 +1,36 @@
+import numpy as np
+import pandas
+
+
+def y(PeriodDataset):
+  var = PeriodDataset
+
+  # if the Distance Column doesn't exist, create it
+  if "Distance" not in var:
+      var["Distance"] = ''
+
+  # calculate distance based on starting coordinates, using Haversine Formula
+  def distance(latb, lonb):
+      start_coords = [30.286058, -97.739353]
+      lata, lona =  start_coords[0], start_coords[1] #make sure to change to UT’s coordinates
+      d = 2 * 6371.0088 * np.arcsin(np.sqrt(hav(latb-lata) + (1 - hav(lata-latb) - hav(lata+latb)) * hav(lonb-lona)))
+      return d * 0.621371
+
+  # Helper function for Haversine
+  def hav(theta):
+      theta = np.radians(theta)
+      return np.square(np.sin(theta/2))
+
+  # Populate the distance columns
+  def create_dist_col(var):
+      var["Distance"] = distance(var["Latitude"], var["Longitude"])
+      return var
+         
+  data = create_dist_col(var)
+
+  # return dataset with calcualted distances 
+  return data
+
+
+
+
